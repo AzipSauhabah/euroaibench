@@ -24,7 +24,7 @@ $SONAR_SCANNER \
   -Dsonar.python.coverage.reportPaths=backend/coverage.xml \
   -Dsonar.python.version=3.11 \
   -Dsonar.host.url=http://localhost:9000 \
-  -Dsonar.login=sqp_0b2c0f199eef2fd0a4e3f3e06ccf2aed1c20ca63
+  -Dsonar.login=squ_0029b00cf94195245fbdb7656e1b5e423ab14a1a
 
 $SONAR_SCANNER \
   -Dsonar.projectKey=euroaibench-frontend \
@@ -32,6 +32,6 @@ $SONAR_SCANNER \
   -Dsonar.exclusions="frontend/src/**/*.test.*,frontend/src/test/**" \
   -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info \
   -Dsonar.host.url=http://localhost:9000 \
-  -Dsonar.login=sqp_8b5d5faeaf7ab2689d3698dc79a5fa3b576e00e0
+  -Dsonar.login=squ_3d1e3dcffc17bbaaf9e390a4587b501271eb4b75
 
 echo "Done → http://localhost:9000/projects"
