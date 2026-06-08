@@ -6,7 +6,7 @@ import enum
 
 class RegulationEnum(str, enum.Enum):
     AMF = "AMF"
-    MIFID2 = "MiFID2"
+    MIFID2 = "MIFID2"
     DORA = "DORA"
 
 class DifficultyEnum(str, enum.Enum):
@@ -39,8 +39,8 @@ class BenchmarkRun(Base):
 class Answer(Base):
     __tablename__ = "answers"
     id = Column(Integer, primary_key=True)
-    run_id = Column(Integer, ForeignKey("benchmark_runs.id"), nullable=False)
-    question_id = Column(Integer, ForeignKey("questions.id"), nullable=False)
+    run_id = Column(Integer, ForeignKey("benchmark_runs.id"), nullable=True)
+    question_id = Column(Integer, ForeignKey("questions.id"), nullable=True)
     model_response = Column(Text)
     judge_score = Column(Float)
     judge_feedback = Column(Text)

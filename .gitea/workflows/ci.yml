@@ -1,0 +1,107 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11-slim
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt -q
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: sqlite:///./test.db
+        run: |
+          cd backend
+          python -m pytest tests/ -v --no-header \
+            --cov=app --cov-report=xml --cov-report=term-missing \
+            --cov-fail-under=80
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: backend/coverage.xml
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Type check
+        run: |
+          cd frontend
+          npx tsc --noEmit
+
+      - name: Run tests
+        run: |
+          cd frontend
+          npm test -- --run --coverage
+
+  build-frontend:
+    needs: [test-backend, test-frontend]
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        env:
+          VITE_API_URL: https://api-bench.sauhabah-advisory.eu
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Upload dist
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+  deploy:
+    needs: [build-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download dist
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+      - name: Deploy to NAS via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 192.168.1.47
+          username: sauhabahaz
+          key: ${{ secrets.NAS_SSH_KEY }}
+          script: |
+            cd /volume1/docker/euroaibench
+            git pull origin master
+            sudo /var/packages/ContainerManager/target/usr/bin/docker cp \
+              frontend/dist/. euroaibench-frontend:/usr/share/nginx/html/
+            sudo /var/packages/ContainerManager/target/usr/bin/docker exec \
+              euroaibench-frontend nginx -s reload
+            echo "Deploy OK $(date)"
