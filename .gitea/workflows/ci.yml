@@ -28,10 +28,10 @@ jobs:
             --cov=app --cov-report=xml --cov-report=term-missing \
             --cov-fail-under=80
 
-      - name: Upload coverage report
+      - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
-          name: coverage-report
+          name: backend-coverage
           path: backend/coverage.xml
 
   test-frontend:
@@ -41,30 +41,29 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Install & test
         run: |
           cd frontend
           npm ci
-
-      - name: Type check
-        run: |
-          cd frontend
           npx tsc --noEmit
-
-      - name: Run tests
-        run: |
-          cd frontend
           npm test -- --run --coverage
 
-  build-frontend:
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/
+
+  build-and-deploy:
     needs: [test-backend, test-frontend]
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     container:
       image: node:20-alpine
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build
+      - name: Build frontend
         env:
           VITE_API_URL: https://api-bench.sauhabah-advisory.eu
         run: |
@@ -72,26 +71,7 @@ jobs:
           npm ci
           npm run build
 
-      - name: Upload dist
-        uses: actions/upload-artifact@v3
-        with:
-          name: frontend-dist
-          path: frontend/dist/
-
-  deploy:
-    needs: [build-frontend]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Download dist
-        uses: actions/download-artifact@v3
-        with:
-          name: frontend-dist
-          path: frontend/dist/
-
-      - name: Deploy to NAS via SSH
+      - name: Deploy to NAS
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: 192.168.1.47
