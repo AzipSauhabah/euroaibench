@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { api } from '../api/client'
 
 interface Props { onRunCreated: (id: number) => void }
@@ -16,7 +16,7 @@ export default function NewRun({ onRunCreated }: Props) {
     try {
       const res = await api.getModels(ollamaHost)
       setModels(res.models)
-      if (res.error) setError(`Ollama: ${res.error}`)
+      if (res.error) setError(res.error)
       if (res.models.length > 0) setSelectedModel(res.models[0])
     } catch (e: any) { setError(e.message) }
     finally { setLoading(false) }
@@ -33,35 +33,54 @@ export default function NewRun({ onRunCreated }: Props) {
 
   return (
     <div>
-      <h1>Nouveau Run de Benchmark</h1>
-      <div className="card">
-        <h2>1. Configurer Ollama</h2>
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-          <input className="input" value={ollamaHost} onChange={e => setOllamaHost(e.target.value)} placeholder="http://IP:11434" />
-          <button className="btn btn-ghost" onClick={fetchModels} disabled={loading}>{loading ? '...' : 'Détecter modèles'}</button>
+      <div className="page-header">
+        <div>
+          <div className="page-title">Run Benchmark</div>
+          <div className="page-subtitle">Evaluate an LLM on 20 regulatory questions via Ollama</div>
         </div>
-        {error && <div className="error" style={{ marginBottom: '1rem' }}>{error}</div>}
-        {models.length > 0 && (
-          <>
-            <h2>2. Choisir le modèle</h2>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
-              {models.map(m => (
-                <button key={m} className={`btn ${selectedModel === m ? 'btn-blue' : 'btn-ghost'}`} onClick={() => setSelectedModel(m)}>{m}</button>
-              ))}
-            </div>
-          </>
-        )}
-        <h2>3. Lancer</h2>
-        <p style={{ color: '#a0aec0', marginBottom: '1rem', fontSize: '0.9rem' }}>
-          Le benchmark va envoyer les 20 questions réglementaires au modèle, puis utiliser Ollama comme juge LLM pour noter chaque réponse sur 10.
-          Durée estimée: 5–15 min selon le modèle.
-        </p>
-        <button className="btn btn-blue" onClick={startRun} disabled={running || !selectedModel} style={{ fontSize: '1rem', padding: '0.8rem 2rem' }}>
-          {running ? '⏳ Benchmark en cours...' : `▶ Lancer avec ${selectedModel || '—'}`}
+      </div>
+
+      <div className="run-section">
+        <div className="section-label"><span className="section-num">01</span> Ollama endpoint</div>
+        <div style={{ display: 'flex', gap: '0.75rem', maxWidth: 560 }}>
+          <input className="input" value={ollamaHost} onChange={e => setOllamaHost(e.target.value)} placeholder="http://IP:11434" />
+          <button className="btn btn-ghost" onClick={fetchModels} disabled={loading} style={{ whiteSpace: 'nowrap', minWidth: 130 }}>
+            {loading ? '...' : 'Detect models'}
+          </button>
+        </div>
+        {error && <div className="error" style={{ marginTop: '0.75rem', maxWidth: 560 }}>{error}</div>}
+      </div>
+
+      {models.length > 0 && (
+        <div className="run-section">
+          <div className="section-label"><span className="section-num">02</span> Select model</div>
+          <div className="model-grid">
+            {models.map(m => (
+              <button key={m} className={`model-btn ${selectedModel === m ? 'selected' : ''}`} onClick={() => setSelectedModel(m)}>{m}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="run-section">
+        <div className="section-label"><span className="section-num">{models.length > 0 ? '03' : '02'}</span> Launch</div>
+        <div className="run-info">
+          <p>The benchmark sends <strong>20 questions</strong> (AMF · MiFID II · DORA) to the selected model, then uses Ollama as an <strong>LLM judge</strong> to score each response from 0 to 10. Estimated duration: <strong>5–15 min</strong>.</p>
+        </div>
+        <button
+          className="btn btn-gold"
+          onClick={startRun}
+          disabled={running || !selectedModel}
+          style={{ fontSize: '0.9rem', padding: '0.7rem 2rem', opacity: (!selectedModel && !running) ? 0.4 : 1 }}
+        >
+          {running ? 'Running...' : `▶ Start with ${selectedModel || '—'}`}
         </button>
-        {running && <p style={{ color: '#a0aec0', marginTop: '1rem', fontSize: '0.85rem' }}>
-          Ne fermez pas cette fenêtre. Les 20 questions sont envoyées séquentiellement au LLM + juge.
-        </p>}
+        {running && (
+          <div className="running-indicator">
+            <div className="pulse" />
+            Benchmark in progress — do not close this window
+          </div>
+        )}
       </div>
     </div>
   )

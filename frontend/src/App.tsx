@@ -9,17 +9,19 @@ type Page = { name: 'dashboard' } | { name: 'questions' } | { name: 'run'; id: n
 
 export default function App() {
   const [page, setPage] = useState<Page>({ name: 'dashboard' })
-
   const nav = (p: Page) => setPage(p)
 
   return (
     <div className="app">
       <nav className="navbar">
-        <span className="brand" onClick={() => nav({ name: 'dashboard' })}>⚖️ EuroAIBench</span>
+        <div className="brand" onClick={() => nav({ name: 'dashboard' })}>
+          ⚖ EuroAIBench
+          <span className="brand-sub">v1.0 · AMF · MiFID II · DORA</span>
+        </div>
         <div className="nav-links">
-          <button onClick={() => nav({ name: 'dashboard' })}>Dashboard</button>
-          <button onClick={() => nav({ name: 'questions' })}>Questions</button>
-          <button onClick={() => nav({ name: 'new-run' })} className="btn-primary">▶ Nouveau Run</button>
+          <button onClick={() => nav({ name: 'dashboard' })}>Leaderboard</button>
+          <button onClick={() => nav({ name: 'questions' })}>Dataset</button>
+          <button onClick={() => nav({ name: 'new-run' })} className="btn-run">▶ Run Benchmark</button>
         </div>
       </nav>
       <main className="main">
