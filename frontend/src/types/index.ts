@@ -18,6 +18,8 @@ export interface Answer {
   judge_score?: number
   judge_feedback?: string
   latency_ms?: number
+  hallucination?: boolean
+  hallucination_detail?: string
 }
 
 export interface BenchmarkRun {
@@ -27,6 +29,7 @@ export interface BenchmarkRun {
   started_at: string
   finished_at?: string
   avg_score?: number
+  hallucination_rate?: number
   answers: Answer[]
 }
 

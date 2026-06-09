@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Float, DateTime, ForeignKey, Enum as SAEnum
+from sqlalchemy import Column, Integer, String, Text, Float, DateTime, Boolean, ForeignKey, Enum as SAEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.database import Base
@@ -34,6 +34,7 @@ class BenchmarkRun(Base):
     started_at = Column(DateTime(timezone=True), server_default=func.now())
     finished_at = Column(DateTime(timezone=True))
     avg_score = Column(Float)
+    hallucination_rate = Column(Float, default=0.0)
     answers = relationship("Answer", back_populates="run")
 
 class Answer(Base):
@@ -45,6 +46,8 @@ class Answer(Base):
     judge_score = Column(Float)
     judge_feedback = Column(Text)
     latency_ms = Column(Integer)
+    hallucination = Column(Boolean, default=False, nullable=False)
+    hallucination_detail = Column(Text, default="")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     run = relationship("BenchmarkRun", back_populates="answers")
     question = relationship("Question", back_populates="answers")

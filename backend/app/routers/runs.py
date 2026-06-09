@@ -33,6 +33,7 @@ async def create_run(body: RunCreate, db: Session = Depends(get_db)):
 
     questions = db.query(Question).all()
     scores = []
+    hallucination_count = 0
 
     for q in questions:
         prompt = f"""Tu es un assistant expert en réglementation financière européenne.
@@ -42,12 +43,18 @@ Réponds de façon précise et complète à la question suivante:
 
 Cite les articles réglementaires pertinents si applicable."""
         try:
-            response, latency = await query_ollama(prompt, model=body.model_name, host=body.ollama_host)
+            response, latency = await query_ollama(
+                prompt, model=body.model_name, host=body.ollama_host
+            )
             judgment = await judge_answer(q.question, q.reference_answer, response)
             score = float(judgment.get("score", 0))
             feedback = judgment.get("feedback", "")
+            hallucination = bool(judgment.get("hallucination", False))
+            hallucination_detail = judgment.get("hallucination_detail", "")
         except Exception as e:
-            response, latency, score, feedback = f"ERROR: {e}", 0, 0.0, "Erreur Ollama"
+            response, latency = f"ERROR: {e}", 0
+            score, feedback = 0.0, "Erreur Ollama"
+            hallucination, hallucination_detail = False, ""
 
         answer = Answer(
             run_id=run.id,
@@ -56,12 +63,17 @@ Cite les articles réglementaires pertinents si applicable."""
             judge_score=score,
             judge_feedback=feedback,
             latency_ms=latency,
+            hallucination=hallucination,
+            hallucination_detail=hallucination_detail,
         )
         db.add(answer)
         scores.append(score)
+        if hallucination:
+            hallucination_count += 1
 
     run.finished_at = datetime.now(timezone.utc)
     run.avg_score = round(sum(scores) / len(scores), 2) if scores else 0.0
+    run.hallucination_rate = round(hallucination_count / len(questions), 3) if questions else 0.0
     db.commit()
     db.refresh(run)
     return run

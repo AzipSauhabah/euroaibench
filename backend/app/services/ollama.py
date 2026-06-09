@@ -1,9 +1,11 @@
 import httpx
 import time
+import json
+import re
 from app.core.config import settings
 
+
 async def query_ollama(prompt: str, model: str = None, host: str = None) -> tuple[str, int]:
-    """Query Ollama, return (response_text, latency_ms)."""
     _host = host or settings.OLLAMA_HOST
     _model = model or settings.OLLAMA_MODEL
     url = f"{_host}/api/generate"
@@ -15,8 +17,8 @@ async def query_ollama(prompt: str, model: str = None, host: str = None) -> tupl
     latency_ms = int((time.monotonic() - t0) * 1000)
     return r.json()["response"], latency_ms
 
+
 async def judge_answer(question: str, reference: str, model_response: str) -> dict:
-    """Use Ollama as LLM judge. Returns {score: 0-10, feedback: str}."""
     prompt = f"""Tu es un expert en réglementation financière européenne (AMF, MiFID II, DORA).
 Évalue la réponse d'un modèle IA à une question réglementaire.
 
@@ -32,15 +34,29 @@ RÉPONSE DU MODÈLE: {model_response}
 - Clarté et précision (2 pts)
 - Références aux articles/textes pertinents (1 pt)
 
+Détecte également toute hallucination réglementaire:
+- Article ou loi inventé ou incorrectement cité
+- Obligation ou règle qui n'existe pas dans le texte réglementaire
+- Date ou seuil inexact (ex: délai inventé)
+
 Réponds UNIQUEMENT en JSON valide:
-{{"score": <nombre entre 0 et 10>, "feedback": "<explication concise en français>"}}"""
+{{"score": <0-10>, "feedback": "<explication en français>", "hallucination": <true/false>, "hallucination_detail": "<description si hallucination, sinon vide>"}}"""
 
     response, _ = await query_ollama(prompt)
-    import json, re
     match = re.search(r'\{.*\}', response, re.DOTALL)
     if match:
-        return json.loads(match.group())
-    return {"score": 0.0, "feedback": "Erreur de parsing de la réponse du juge."}
+        try:
+            result = json.loads(match.group())
+            return {
+                "score": float(result.get("score", 0)),
+                "feedback": result.get("feedback", ""),
+                "hallucination": bool(result.get("hallucination", False)),
+                "hallucination_detail": result.get("hallucination_detail", ""),
+            }
+        except (json.JSONDecodeError, ValueError):
+            pass
+    return {"score": 0.0, "feedback": "Erreur de parsing.", "hallucination": False, "hallucination_detail": ""}
+
 
 async def list_ollama_models(host: str = None) -> list:
     _host = host or settings.OLLAMA_HOST

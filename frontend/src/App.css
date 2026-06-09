@@ -706,7 +706,7 @@ summary:hover { color: var(--gold); }
 /* CHARTS */
 .charts-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   margin-bottom: 1.5rem;
   background: var(--border);
@@ -809,3 +809,43 @@ summary:hover { color: var(--gold); }
   letter-spacing: 0.04em !important;
 }
 .nav-links a.btn-run:hover { background: var(--gold-bright) !important; }
+
+
+/* ── Hallucination ────────────────────────────────── */
+.hallu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--red) 55%, transparent);
+  background: color-mix(in srgb, var(--red) 12%, transparent);
+  color: var(--red);
+  border-radius: 3px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: help;
+}
+.hallu-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--red) 25%, transparent);
+  flex: 0 0 auto;
+}
+.hallu-detail {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: color-mix(in srgb, var(--red) 80%, var(--text-2));
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 980px) {
+  .charts-row { grid-template-columns: 1fr; }
+}

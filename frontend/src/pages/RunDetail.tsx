@@ -5,7 +5,8 @@ import type { BenchmarkRun, Question } from '../types'
 import { ScoreBar } from '../components/ui/ScoreBar'
 import { LoadingState } from '../components/ui/LoadingState'
 import { Badge } from '../components/ui/Badge'
-import { getRegScores, scoreColor, scoreLetter, formatDate, formatDuration } from '../utils/scores'
+import { HallucinationBadge } from '../components/ui/HallucinationBadge'
+import { getRegScores, scoreColor, scoreLetter, formatDate, formatDuration, hallucinationRate, hallucinationColor } from '../utils/scores'
 
 const REG_LABELS: Record<string,string> = { AMF:'AMF', MIFID2:'MiFID II', DORA:'DORA' }
 
@@ -48,6 +49,11 @@ export default function RunDetail() {
             <span style={{fontFamily:'Playfair Display,serif',fontSize:'1.3rem',fontWeight:600,color:scoreColor(run.avg_score)}}>{scoreLetter(run.avg_score)}</span>
             <div className="score-hero-label">Overall</div>
           </div>
+          {(() => { const hr = hallucinationRate(run); return hr==null ? null : (
+            <div style={{marginTop:'0.5rem',textAlign:'right'}}>
+              <span style={{fontFamily:'DM Mono,monospace',fontSize:'0.95rem',fontWeight:600,color:hallucinationColor(hr)}}>{(hr*100).toFixed(0)}%</span>
+              <span style={{fontSize:'0.6rem',color:'var(--text-3)',letterSpacing:'0.1em',textTransform:'uppercase',marginLeft:'0.4rem'}}>Hallucination rate</span>
+            </div>) })()}
         </div>
       </div>
 
@@ -74,6 +80,7 @@ export default function RunDetail() {
                 <div style={{display:'flex',gap:'0.5rem',alignItems:'center',flexWrap:'wrap'}}>
                   <span style={{fontFamily:'DM Mono,monospace',fontSize:'0.65rem',color:'var(--text-3)'}}>Q{String(i+1).padStart(2,'0')}</span>
                   {q && <><Badge type={q.regulation}>{REG_LABELS[q.regulation]}</Badge><Badge type={q.difficulty}>{q.difficulty}</Badge><span style={{fontSize:'0.72rem',color:'var(--text-3)',fontFamily:'DM Mono,monospace'}}>{q.category}</span></>}
+                  <HallucinationBadge hallucination={a.hallucination} detail={a.hallucination_detail} />
                 </div>
                 <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
                   {a.latency_ms && <span style={{fontFamily:'DM Mono,monospace',fontSize:'0.65rem',color:'var(--text-3)'}}>{(a.latency_ms/1000).toFixed(1)}s</span>}

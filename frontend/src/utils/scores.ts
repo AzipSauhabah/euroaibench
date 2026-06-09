@@ -38,3 +38,17 @@ export function formatDuration(start: string, end?: string): string {
   const s = Math.floor((ms % 60000) / 1000)
   return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
+
+export function hallucinationRate(run: BenchmarkRun): number | null {
+  if (run.hallucination_rate != null) return run.hallucination_rate
+  if (!run.answers || run.answers.length === 0) return null
+  const count = run.answers.filter(a => a.hallucination === true).length
+  return count / run.answers.length
+}
+
+export function hallucinationColor(rate?: number | null): string {
+  if (rate == null) return 'var(--text-3)'
+  if (rate <= 0.05) return 'var(--green)'
+  if (rate <= 0.15) return 'var(--amber)'
+  return 'var(--red)'
+}

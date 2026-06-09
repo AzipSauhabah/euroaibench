@@ -10,17 +10,19 @@ class QuestionOut(BaseModel):
     category: str
     question: str
     reference_answer: str
-    article_ref: Optional[str]
+    article_ref: Optional[str] = None
     class Config:
         from_attributes = True
 
 class AnswerOut(BaseModel):
     id: int
-    question_id: int
-    model_response: Optional[str]
-    judge_score: Optional[float]
-    judge_feedback: Optional[str]
-    latency_ms: Optional[int]
+    question_id: Optional[int] = None
+    model_response: Optional[str] = None
+    judge_score: Optional[float] = None
+    judge_feedback: Optional[str] = None
+    latency_ms: Optional[int] = None
+    hallucination: bool = False
+    hallucination_detail: Optional[str] = None
     class Config:
         from_attributes = True
 
@@ -32,8 +34,9 @@ class RunOut(BaseModel):
     id: int
     model_name: str
     started_at: datetime
-    finished_at: Optional[datetime]
-    avg_score: Optional[float]
+    finished_at: Optional[datetime] = None
+    avg_score: Optional[float] = None
+    hallucination_rate: Optional[float] = None
     answers: List[AnswerOut] = []
     class Config:
         from_attributes = True
@@ -45,3 +48,5 @@ class JudgeRequest(BaseModel):
 class JudgeResult(BaseModel):
     score: float
     feedback: str
+    hallucination: bool = False
+    hallucination_detail: str = ""
