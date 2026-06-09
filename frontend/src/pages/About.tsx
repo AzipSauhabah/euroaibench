@@ -1,13 +1,22 @@
 import { useNavigate } from 'react-router-dom'
 
+const DOMAIN_CARDS = [
+  { name:'Market Finance', color:'#c9a84c', desc:'Derivatives, structured products (autocalls, Phoenix, Himalaya), the Greeks, volatility and hedging.' },
+  { name:'Corporate Finance', color:'#5a7ec2', desc:'Valuation (DCF/FCFF), WACC, capital structure, Modigliani-Miller, M&A and LBO.' },
+  { name:'Project Finance', color:'#5a9c6e', desc:'SPV structuring, non-recourse debt, DSCR/LLCR debt sizing and sculpting, ring-fencing.' },
+  { name:'Risk Management', color:'#c25a5a', desc:'VaR and Expected Shortfall, coherence, Basel/FRTB, CVA and the broader xVA family.' },
+  { name:'Quant Strategies', color:'#9c5ac2', desc:'Sharpe and information ratios, factor investing, Fama-French, backtesting pitfalls.' },
+  { name:'Rates & Fixed Income', color:'#4ca89c', desc:'Duration and convexity, swap valuation, par rates, multi-curve and OIS discounting.' },
+]
+
 export default function About() {
   const navigate = useNavigate()
   return (
     <div>
       <div className="page-header">
         <div>
-          <div className="page-title">About EuroAIBench</div>
-          <div className="page-subtitle">Open benchmark for European financial regulation</div>
+          <div className="page-title">About QuantAIBench</div>
+          <div className="page-subtitle">Open benchmark for quantitative &amp; market finance</div>
         </div>
       </div>
 
@@ -15,32 +24,29 @@ export default function About() {
         <div className="run-section">
           <div className="section-label">Mission</div>
           <p style={{fontSize:'0.875rem',color:'var(--text-2)',lineHeight:1.8}}>
-            LLMs are increasingly used in financial services for compliance assistance, regulatory Q&A,
-            and legal research. Yet no public benchmark existed for European financial regulation in French.
-            EuroAIBench fills that gap with a rigorous, expert-curated evaluation framework.
+            LLMs are increasingly used across trading floors, quant desks and finance functions for
+            modeling, derivation and technical Q&amp;A. Yet no public benchmark measured how reliably they
+            handle rigorous quantitative finance — and how often they hallucinate formulas or results.
+            QuantAIBench fills that gap with an expert-curated, bilingual evaluation framework.
           </p>
         </div>
         <div className="run-section">
           <div className="section-label">Methodology</div>
           <div style={{fontFamily:'DM Mono,monospace',fontSize:'0.75rem',color:'var(--text-2)',lineHeight:2}}>
-            <div>20 questions · expert-curated</div>
-            <div>3 regulations: AMF · MiFID II · DORA</div>
+            <div>24 questions · expert-curated · bilingual EN/FR</div>
+            <div>6 domains: market · corporate · project · risk · quant · rates</div>
             <div>3 difficulty levels: easy · medium · hard</div>
             <div>LLM judge scoring 0–10</div>
-            <div>Criteria: accuracy · completeness · citations</div>
+            <div>Criteria: technical accuracy · rigor · hallucination detection</div>
           </div>
         </div>
       </div>
 
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'1px',marginBottom:'1px'}}>
-        {[
-          { reg:'AMF', color:'#5a7ec2', desc:'Autorité des marchés financiers. Market abuse, investor protection, PSI conduct, sanctions, OPCVM reporting.' },
-          { reg:'MiFID II', color:'#c9a84c', desc:'Markets in Financial Instruments Directive. Client classification, best execution, product governance, transaction reporting, research unbundling.' },
-          { reg:'DORA', color:'#5a9c6e', desc:'Digital Operational Resilience Act. ICT risk management, incident reporting, TLPT testing, third-party risk. In force since Jan 2025.' },
-        ].map(r => (
-          <div key={r.reg} className="run-section">
-            <div style={{fontFamily:'Playfair Display,serif',fontSize:'1.4rem',fontWeight:600,color:r.color,marginBottom:'0.5rem'}}>{r.reg}</div>
-            <p style={{fontSize:'0.8rem',color:'var(--text-2)',lineHeight:1.7}}>{r.desc}</p>
+        {DOMAIN_CARDS.map(d => (
+          <div key={d.name} className="run-section">
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'1.2rem',fontWeight:600,color:d.color,marginBottom:'0.5rem'}}>{d.name}</div>
+            <p style={{fontSize:'0.8rem',color:'var(--text-2)',lineHeight:1.7}}>{d.desc}</p>
           </div>
         ))}
       </div>
@@ -58,7 +64,7 @@ export default function About() {
           <div className="section-label">Built by</div>
           <p style={{fontSize:'0.875rem',color:'var(--text-2)',lineHeight:1.8,marginBottom:'0.75rem'}}>
             <strong style={{color:'var(--text)'}}>Sauhabah Advisory</strong> — independent quantitative finance platform.
-            Senior front office developer background (C++, equity derivatives, fixed income).
+            Senior front office developer background (C++, equity derivatives, fixed income, IRD).
           </p>
           <div style={{display:'flex',gap:'0.5rem'}}>
             <a href="https://github.com/AzipSauhabah/euroaibench" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{fontSize:'0.75rem'}}>GitHub ↗</a>

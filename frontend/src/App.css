@@ -849,3 +849,14 @@ summary:hover { color: var(--gold); }
 @media (max-width: 980px) {
   .charts-row { grid-template-columns: 1fr; }
 }
+
+/* ── Domain badges (quant pivot) ──────────────────── */
+.badge-market    { background: rgba(201,168,76,0.14); color: #c9a84c; border: 1px solid rgba(201,168,76,0.25); }
+.badge-corporate { background: rgba(90,126,194,0.15); color: #7a9ed4; border: 1px solid rgba(90,126,194,0.25); }
+.badge-project   { background: rgba(90,156,110,0.13); color: #6ab87e; border: 1px solid rgba(90,156,110,0.25); }
+.badge-risk      { background: rgba(194,90,90,0.14); color: #d47a7a; border: 1px solid rgba(194,90,90,0.25); }
+.badge-quant     { background: rgba(156,90,194,0.14); color: #b07ad4; border: 1px solid rgba(156,90,194,0.25); }
+.badge-rates     { background: rgba(76,168,156,0.14); color: #5fc2b4; border: 1px solid rgba(76,168,156,0.25); }
+/* Language badges */
+.badge-en { background: rgba(255,255,255,0.05); color: var(--text-2); border: 1px solid var(--border-2); }
+.badge-fr { background: rgba(255,255,255,0.05); color: var(--text-2); border: 1px solid var(--border-2); }

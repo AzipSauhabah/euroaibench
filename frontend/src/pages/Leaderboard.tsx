@@ -1,21 +1,26 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
-import type { BenchmarkRun } from '../types'
+import type { BenchmarkRun, Question } from '../types'
 import { ScoreBar } from '../components/ui/ScoreBar'
 import { LoadingState } from '../components/ui/LoadingState'
 import { EmptyState } from '../components/ui/EmptyState'
 import { BarComparison } from '../components/charts/BarComparison'
-import { RegulationRadar } from '../components/charts/RadarChart'
+import { DomainRadar } from '../components/charts/RadarChart'
 import { scoreColor, scoreLetter, formatDate, formatDuration, hallucinationRate, hallucinationColor } from '../utils/scores'
 import { HallucinationScatter } from '../components/charts/HallucinationScatter'
 
 export default function Leaderboard() {
   const [runs, setRuns] = useState<BenchmarkRun[]>([])
+  const [questions, setQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  useEffect(() => { api.getRuns().then(setRuns).finally(() => setLoading(false)) }, [])
+  useEffect(() => {
+    Promise.all([api.getRuns(), api.getQuestions()])
+      .then(([r, q]) => { setRuns(r); setQuestions(q) })
+      .finally(() => setLoading(false))
+  }, [])
 
   const sorted = [...runs].filter(r => r.avg_score != null).sort((a, b) => (b.avg_score ?? 0) - (a.avg_score ?? 0))
   const best = sorted[0]
@@ -25,11 +30,11 @@ export default function Leaderboard() {
     <div>
       {/* HERO */}
       <div className="hero-section">
-        <div className="hero-eyebrow">European Financial Regulation Benchmark</div>
-        <h1 className="hero-title">Which LLM understands<br /><em>European financial law?</em></h1>
+        <div className="hero-eyebrow">Quantitative Finance Benchmark</div>
+        <h1 className="hero-title">Which LLM understands<br /><em>quantitative finance?</em></h1>
         <p className="hero-sub">
-          20 expert-curated questions across AMF, MiFID II and DORA — evaluated in French
-          by an LLM judge on accuracy, completeness and regulatory citations.
+          24 expert-curated questions across market, corporate &amp; project finance, risk, quant
+          strategies and rates — bilingual EN/FR, scored 0–10 by an LLM judge on technical accuracy.
         </p>
         <div className="hero-actions">
           <button className="btn btn-gold" onClick={() => navigate('/run')}>▶ Run a benchmark</button>
@@ -65,8 +70,8 @@ export default function Leaderboard() {
             <BarComparison runs={sorted} />
           </div>
           <div className="chart-card">
-            <div className="chart-label">By regulation (top 3)</div>
-            <RegulationRadar runs={sorted} />
+            <div className="chart-label">By domain (top 3)</div>
+            <DomainRadar runs={sorted} questions={questions} />
           </div>
           <div className="chart-card">
             <div className="chart-label">Score vs Hallucination rate</div>
@@ -78,7 +83,7 @@ export default function Leaderboard() {
       {/* LEADERBOARD TABLE */}
       <div className="table-wrap">
         <div className="table-header">
-          <span className="table-title">Rankings — 20 questions · AMF · MiFID II · DORA</span>
+          <span className="table-title">Rankings — 24 questions · 6 domains · EN/FR</span>
           {sorted.length > 0 && (
             <button className="btn btn-ghost" style={{fontSize:'0.72rem'}} onClick={() => {
               const csv = ['Rank,Model,Score,HallucinationRate,Questions,Duration,Date',

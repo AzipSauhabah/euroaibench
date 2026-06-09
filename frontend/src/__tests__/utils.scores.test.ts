@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { scoreColor, scoreLetter, formatDate, formatDuration, getRegScores } from '../utils/scores'
+import { scoreColor, scoreLetter, formatDate, formatDuration, getDomainScores } from '../utils/scores'
 import type { BenchmarkRun } from '../types'
 
 describe('scoreColor', () => {
@@ -64,12 +64,12 @@ describe('formatDuration', () => {
   })
 })
 
-describe('getRegScores', () => {
+describe('getDomainScores', () => {
   const mockQuestions = [
-    { id: 1, regulation: 'AMF' as const },
-    { id: 2, regulation: 'AMF' as const },
-    { id: 3, regulation: 'MIFID2' as const },
-    { id: 4, regulation: 'DORA' as const },
+    { id: 1, domain: 'MARKET' as const },
+    { id: 2, domain: 'MARKET' as const },
+    { id: 3, domain: 'CORPORATE' as const },
+    { id: 4, domain: 'RISK' as const },
   ]
 
   const mockRun: BenchmarkRun = {
@@ -83,26 +83,26 @@ describe('getRegScores', () => {
     ]
   }
 
-  it('calculates AMF average correctly', () => {
-    const scores = getRegScores(mockRun, mockQuestions)
-    expect(scores.AMF).toBeCloseTo(7.0)
+  it('calculates MARKET average correctly', () => {
+    const scores = getDomainScores(mockRun, mockQuestions)
+    expect(scores.MARKET).toBeCloseTo(7.0)
   })
 
-  it('calculates MIFID2 average correctly', () => {
-    const scores = getRegScores(mockRun, mockQuestions)
-    expect(scores.MIFID2).toBeCloseTo(9.0)
+  it('calculates CORPORATE average correctly', () => {
+    const scores = getDomainScores(mockRun, mockQuestions)
+    expect(scores.CORPORATE).toBeCloseTo(9.0)
   })
 
-  it('calculates DORA average correctly', () => {
-    const scores = getRegScores(mockRun, mockQuestions)
-    expect(scores.DORA).toBeCloseTo(7.0)
+  it('calculates RISK average correctly', () => {
+    const scores = getDomainScores(mockRun, mockQuestions)
+    expect(scores.RISK).toBeCloseTo(7.0)
   })
 
   it('returns null for regulation with no answers', () => {
     const emptyRun: BenchmarkRun = { ...mockRun, answers: [] }
-    const scores = getRegScores(emptyRun, mockQuestions)
-    expect(scores.AMF).toBeNull()
-    expect(scores.MIFID2).toBeNull()
-    expect(scores.DORA).toBeNull()
+    const scores = getDomainScores(emptyRun, mockQuestions)
+    expect(scores.MARKET).toBeNull()
+    expect(scores.CORPORATE).toBeNull()
+    expect(scores.RISK).toBeNull()
   })
 })

@@ -1,14 +1,36 @@
-export type Regulation = 'AMF' | 'MIFID2' | 'DORA'
+export type Domain = 'MARKET' | 'CORPORATE' | 'PROJECT' | 'RISK' | 'QUANT' | 'RATES'
+export type Language = 'EN' | 'FR'
 export type Difficulty = 'easy' | 'medium' | 'hard'
+
+export const DOMAINS: Domain[] = ['MARKET', 'CORPORATE', 'PROJECT', 'RISK', 'QUANT', 'RATES']
+
+export const DOMAIN_LABELS: Record<Domain, string> = {
+  MARKET: 'Market Finance',
+  CORPORATE: 'Corporate Finance',
+  PROJECT: 'Project Finance',
+  RISK: 'Risk Management',
+  QUANT: 'Quant Strategies',
+  RATES: 'Rates & Fixed Income',
+}
+
+export const DOMAIN_SHORT: Record<Domain, string> = {
+  MARKET: 'Market',
+  CORPORATE: 'Corporate',
+  PROJECT: 'Project',
+  RISK: 'Risk',
+  QUANT: 'Quant',
+  RATES: 'Rates',
+}
 
 export interface Question {
   id: number
-  regulation: Regulation
+  domain: Domain
+  language: Language
   difficulty: Difficulty
   category: string
   question: string
   reference_answer: string
-  article_ref?: string
+  source_ref?: string
 }
 
 export interface Answer {
@@ -44,8 +66,4 @@ export interface ModelInfo {
   last_run?: string
 }
 
-export interface RegScores {
-  AMF: number | null
-  MIFID2: number | null
-  DORA: number | null
-}
+export type DomainScores = Record<Domain, number | null>

@@ -1,6 +1,6 @@
 const ENDPOINTS = [
-  { method:'GET', path:'/health', desc:'Health check', response:'{"status":"ok","service":"euroaibench"}' },
-  { method:'GET', path:'/questions/', desc:'List all 20 benchmark questions', response:'[{"id":1,"regulation":"AMF","difficulty":"easy","category":"...","question":"...","reference_answer":"...","article_ref":"..."}]' },
+  { method:'GET', path:'/health', desc:'Health check', response:'{"status":"ok","service":"quantaibench"}' },
+  { method:'GET', path:'/questions/', desc:'List all 24 benchmark questions', response:'[{"id":1,"domain":"MARKET","language":"EN","difficulty":"hard","category":"...","question":"...","reference_answer":"...","source_ref":"..."}]' },
   { method:'GET', path:'/questions/{id}', desc:'Get a single question by ID', response:'{"id":1,...}' },
   { method:'GET', path:'/runs/', desc:'List all benchmark runs ordered by date', response:'[{"id":1,"model_name":"mistral:7b","avg_score":7.4,"answers":[...],...}]' },
   { method:'POST', path:'/runs/', desc:'Launch a new benchmark run', response:'{"id":4,"model_name":"...","avg_score":...}', body:'{"model_name":"mistral:7b","ollama_host":"http://IP:11434"}' },

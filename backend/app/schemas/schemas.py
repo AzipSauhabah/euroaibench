@@ -1,16 +1,17 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from app.models.models import RegulationEnum, DifficultyEnum
+from app.models.models import DomainEnum, LangEnum, DifficultyEnum
 
 class QuestionOut(BaseModel):
     id: int
-    regulation: RegulationEnum
+    domain: DomainEnum
+    language: LangEnum
     difficulty: DifficultyEnum
     category: str
     question: str
     reference_answer: str
-    article_ref: Optional[str] = None
+    source_ref: Optional[str] = None
     class Config:
         from_attributes = True
 

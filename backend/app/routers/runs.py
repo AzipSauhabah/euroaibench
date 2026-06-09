@@ -36,12 +36,20 @@ async def create_run(body: RunCreate, db: Session = Depends(get_db)):
     hallucination_count = 0
 
     for q in questions:
-        prompt = f"""Tu es un assistant expert en réglementation financière européenne.
-Réponds de façon précise et complète à la question suivante:
+        if getattr(q, "language", None) and str(q.language.value if hasattr(q.language, "value") else q.language) == "FR":
+            prompt = f"""Tu es un expert en finance quantitative et de marché.
+Réponds de façon précise, rigoureuse et complète à la question suivante:
 
 {q.question}
 
-Cite les articles réglementaires pertinents si applicable."""
+Justifie avec les modèles, formules ou hypothèses pertinents lorsque c'est applicable."""
+        else:
+            prompt = f"""You are an expert in quantitative and market finance.
+Answer the following question precisely, rigorously and completely:
+
+{q.question}
+
+Justify with the relevant models, formulas or assumptions where applicable."""
         try:
             response, latency = await query_ollama(
                 prompt, model=body.model_name, host=body.ollama_host

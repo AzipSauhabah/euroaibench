@@ -4,10 +4,17 @@ from sqlalchemy.sql import func
 from app.db.database import Base
 import enum
 
-class RegulationEnum(str, enum.Enum):
-    AMF = "AMF"
-    MIFID2 = "MIFID2"
-    DORA = "DORA"
+class DomainEnum(str, enum.Enum):
+    MARKET = "MARKET"        # Market finance: derivatives, structured products, vol
+    CORPORATE = "CORPORATE"  # Corporate finance: valuation, M&A, capital structure
+    PROJECT = "PROJECT"      # Project finance: SPV, DSCR, debt sizing
+    RISK = "RISK"            # Risk management: VaR, CVA/xVA, stress testing
+    QUANT = "QUANT"          # Quant strategies: factor, momentum, backtesting
+    RATES = "RATES"          # Fixed income & rates: IRS, curves, duration
+
+class LangEnum(str, enum.Enum):
+    EN = "EN"
+    FR = "FR"
 
 class DifficultyEnum(str, enum.Enum):
     easy = "easy"
@@ -17,12 +24,13 @@ class DifficultyEnum(str, enum.Enum):
 class Question(Base):
     __tablename__ = "questions"
     id = Column(Integer, primary_key=True)
-    regulation = Column(SAEnum(RegulationEnum), nullable=False)
+    domain = Column(SAEnum(DomainEnum), nullable=False)
+    language = Column(SAEnum(LangEnum), nullable=False, default=LangEnum.EN)
     difficulty = Column(SAEnum(DifficultyEnum), nullable=False)
     category = Column(String(100), nullable=False)
     question = Column(Text, nullable=False)
     reference_answer = Column(Text, nullable=False)
-    article_ref = Column(String(200))
+    source_ref = Column(String(200))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     answers = relationship("Answer", back_populates="question")
 

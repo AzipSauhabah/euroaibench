@@ -37,7 +37,7 @@ export default function RunPage() {
       <div className="page-header">
         <div>
           <div className="page-title">Run Benchmark</div>
-          <div className="page-subtitle">Evaluate an LLM on 20 regulatory questions in French</div>
+          <div className="page-subtitle">Evaluate an LLM on 24 quant finance questions (EN/FR)</div>
         </div>
       </div>
 
@@ -56,9 +56,9 @@ export default function RunPage() {
         <div className="run-section" style={{borderLeft:'none'}}>
           <div className="section-label"><span className="section-num">Info</span></div>
           <div style={{fontFamily:'DM Mono,monospace',fontSize:'0.72rem',color:'var(--text-3)',lineHeight:1.8}}>
-            <div>Questions: <span style={{color:'var(--text-2)'}}>20</span></div>
-            <div>Regulations: <span style={{color:'var(--text-2)'}}>AMF · MiFID II · DORA</span></div>
-            <div>Language: <span style={{color:'var(--text-2)'}}>French</span></div>
+            <div>Questions: <span style={{color:'var(--text-2)'}}>24</span></div>
+            <div>Domains: <span style={{color:'var(--text-2)'}}>Market · Corporate · Project · Risk · Quant · Rates</span></div>
+            <div>Languages: <span style={{color:'var(--text-2)'}}>EN · FR</span></div>
             <div>Judge: <span style={{color:'var(--text-2)'}}>Ollama LLM-as-judge</span></div>
             <div>Duration: <span style={{color:'var(--text-2)'}}>5–15 min</span></div>
           </div>

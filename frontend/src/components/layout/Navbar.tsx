@@ -4,8 +4,8 @@ export function Navbar() {
   return (
     <nav className="navbar">
       <NavLink to="/" className="brand">
-        ⚖ EuroAIBench
-        <span className="brand-sub">v1.0 · AMF · MiFID II · DORA</span>
+        Σ QuantAIBench
+        <span className="brand-sub">v1.0 · Market · Corporate · Risk · Quant</span>
       </NavLink>
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-active' : ''}>Leaderboard</NavLink>

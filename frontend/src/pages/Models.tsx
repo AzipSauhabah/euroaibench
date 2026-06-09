@@ -11,7 +11,7 @@ export default function Models() {
       <div className="page-header">
         <div>
           <div className="page-title">Models</div>
-          <div className="page-subtitle">All LLMs evaluated on EuroAIBench · Run via Ollama</div>
+          <div className="page-subtitle">All LLMs evaluated on QuantAIBench · Run via Ollama</div>
         </div>
       </div>
 

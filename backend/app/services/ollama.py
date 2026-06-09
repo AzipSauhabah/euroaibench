@@ -19,8 +19,7 @@ async def query_ollama(prompt: str, model: str = None, host: str = None) -> tupl
 
 
 async def judge_answer(question: str, reference: str, model_response: str) -> dict:
-    prompt = f"""Tu es un expert en réglementation financière européenne (AMF, MiFID II, DORA).
-Évalue la réponse d'un modèle IA à une question réglementaire.
+    prompt = f"""Tu es un expert en finance quantitative et de marché (produits dérivés, finance corporate, project finance, gestion des risques, stratégies quant, taux). Évalue la réponse d'un modèle IA à une question technique de finance.
 
 QUESTION: {question}
 
@@ -29,15 +28,16 @@ RÉPONSE DE RÉFÉRENCE: {reference}
 RÉPONSE DU MODÈLE: {model_response}
 
 Évalue sur 10 selon ces critères:
-- Exactitude factuelle et juridique (5 pts)
-- Complétude (2 pts)
-- Clarté et précision (2 pts)
-- Références aux articles/textes pertinents (1 pt)
+- Exactitude technique et mathématique (5 pts)
+- Complétude du raisonnement (2 pts)
+- Clarté et rigueur (2 pts)
+- Mention des modèles/formules/hypothèses pertinents (1 pt)
 
-Détecte également toute hallucination réglementaire:
-- Article ou loi inventé ou incorrectement cité
-- Obligation ou règle qui n'existe pas dans le texte réglementaire
-- Date ou seuil inexact (ex: délai inventé)
+Détecte également toute hallucination technique:
+- Formule, modèle ou théorème inventé ou mal attribué
+- Valeur numérique, signe d'un Greek ou résultat de calcul faux
+- Propriété mathématique ou financière incorrecte (ex: convexité, no-arbitrage)
+- Référence (auteur, papier, norme) inexistante
 
 Réponds UNIQUEMENT en JSON valide:
 {{"score": <0-10>, "feedback": "<explication en français>", "hallucination": <true/false>, "hallucination_detail": "<description si hallucination, sinon vide>"}}"""

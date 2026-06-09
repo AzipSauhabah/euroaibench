@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import type { BenchmarkRun, Question } from '../types'
+import { DOMAINS, DOMAIN_LABELS } from '../types'
 import { ScoreBar } from '../components/ui/ScoreBar'
 import { LoadingState } from '../components/ui/LoadingState'
 import { Badge } from '../components/ui/Badge'
 import { HallucinationBadge } from '../components/ui/HallucinationBadge'
-import { getRegScores, scoreColor, scoreLetter, formatDate, formatDuration, hallucinationRate, hallucinationColor } from '../utils/scores'
-
-const REG_LABELS: Record<string,string> = { AMF:'AMF', MIFID2:'MiFID II', DORA:'DORA' }
+import { getDomainScores, scoreColor, scoreLetter, formatDate, formatDuration, hallucinationRate, hallucinationColor } from '../utils/scores'
 
 export default function RunDetail() {
   const { id } = useParams<{ id: string }>()
@@ -27,7 +26,7 @@ export default function RunDetail() {
   if (loading) return <LoadingState text="Loading results..." />
   if (!run) return <div className="error">Run not found</div>
 
-  const regScores = getRegScores(run, questions)
+  const domainScores = getDomainScores(run, questions)
   const getQ = (qid: number) => questions.find(q => q.id === qid)
 
   return (
@@ -58,11 +57,11 @@ export default function RunDetail() {
       </div>
 
       <div className="grid-stats" style={{gridTemplateColumns:'repeat(3,1fr)',marginBottom:'2rem'}}>
-        {(['AMF','MIFID2','DORA'] as const).map(r => {
-          const val = regScores[r]
+        {DOMAINS.map(r => {
+          const val = domainScores[r]
           return (
             <div key={r} className="stat-card">
-              <div className="stat-label"><Badge type={r}>{REG_LABELS[r]}</Badge></div>
+              <div className="stat-label"><Badge type={r}>{DOMAIN_LABELS[r]}</Badge></div>
               <div className="stat-value" style={{fontSize:'1.8rem',color:scoreColor(val)}}>
                 {val!=null?val.toFixed(1):'—'}{val!=null&&<span style={{fontSize:'0.9rem',color:'var(--text-3)'}}>/10</span>}
               </div>
@@ -79,7 +78,7 @@ export default function RunDetail() {
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'0.6rem'}}>
                 <div style={{display:'flex',gap:'0.5rem',alignItems:'center',flexWrap:'wrap'}}>
                   <span style={{fontFamily:'DM Mono,monospace',fontSize:'0.65rem',color:'var(--text-3)'}}>Q{String(i+1).padStart(2,'0')}</span>
-                  {q && <><Badge type={q.regulation}>{REG_LABELS[q.regulation]}</Badge><Badge type={q.difficulty}>{q.difficulty}</Badge><span style={{fontSize:'0.72rem',color:'var(--text-3)',fontFamily:'DM Mono,monospace'}}>{q.category}</span></>}
+                  {q && <><Badge type={q.domain}>{DOMAIN_LABELS[q.domain]}</Badge><Badge type={q.language.toLowerCase()}>{q.language}</Badge><Badge type={q.difficulty}>{q.difficulty}</Badge><span style={{fontSize:'0.72rem',color:'var(--text-3)',fontFamily:'DM Mono,monospace'}}>{q.category}</span></>}
                   <HallucinationBadge hallucination={a.hallucination} detail={a.hallucination_detail} />
                 </div>
                 <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>

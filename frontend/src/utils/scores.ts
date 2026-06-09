@@ -1,4 +1,5 @@
-import type { BenchmarkRun, RegScores, Regulation } from '../types'
+import type { BenchmarkRun, DomainScores, Domain } from '../types'
+import { DOMAINS } from '../types'
 
 export function scoreColor(s?: number | null): string {
   if (s == null) return 'var(--text-3)'
@@ -17,14 +18,17 @@ export function scoreLetter(s?: number | null): string {
   return 'D'
 }
 
-export function getRegScores(run: BenchmarkRun, questions: { id: number; regulation: Regulation }[]): RegScores {
-  const scores: Record<Regulation, number[]> = { AMF: [], MIFID2: [], DORA: [] }
+export function getDomainScores(run: BenchmarkRun, questions: { id: number; domain: Domain }[]): DomainScores {
+  const buckets = {} as Record<Domain, number[]>
+  DOMAINS.forEach(d => { buckets[d] = [] })
   run.answers.forEach(a => {
     const q = questions.find(q => q.id === a.question_id)
-    if (q && a.judge_score != null) scores[q.regulation].push(a.judge_score)
+    if (q && a.judge_score != null) buckets[q.domain].push(a.judge_score)
   })
   const avg = (arr: number[]) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null
-  return { AMF: avg(scores.AMF), MIFID2: avg(scores.MIFID2), DORA: avg(scores.DORA) }
+  const out = {} as DomainScores
+  DOMAINS.forEach(d => { out[d] = avg(buckets[d]) })
+  return out
 }
 
 export function formatDate(iso: string): string {
