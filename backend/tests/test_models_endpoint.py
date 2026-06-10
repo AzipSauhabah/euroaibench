@@ -17,9 +17,9 @@ def test_models_endpoint_with_custom_host(client):
     with patch("app.routers.models.list_ollama_models",
                new_callable=AsyncMock,
                return_value=["mistral:7b"]):
-        response = client.get("/models/?host=http://192.168.1.164:11434")
+        response = client.get("/models/?host=http://192.168.1.49:11434")
     assert response.status_code == 200
-    assert response.json()["host"] == "http://192.168.1.164:11434"
+    assert response.json()["host"] == "http://192.168.1.49:11434"
 
 
 def test_models_endpoint_ollama_unreachable(client):

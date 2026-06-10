@@ -4,7 +4,7 @@ import { api } from '../api/client'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
 
 export default function RunPage() {
-  const [host, setHost] = useState('http://192.168.1.164:11434')
+  const [host, setHost] = useState('http://192.168.1.49:11434')
   const [models, setModels] = useState<string[]>([])
   const [selected, setSelected] = useState('')
   const [loading, setLoading] = useState(false)
